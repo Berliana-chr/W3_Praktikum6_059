@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Peminjaman Asset - Konsumsi API</title>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+            <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-boxes"></i></div>
+            <div class="sidebar-brand-text mx-3">ASSET <sup>APP</sup></div>
+        </a>
+        <hr class="sidebar-divider my-0">
+        <div class="sidebar-heading pt-3">MASTER DATA</div>
+        <li class="nav-item" data-mod="asset">
+            <a class="nav-link" href="#"><i class="fas fa-fw fa-boxes"></i><span>Master Asset</span></a>
+        </li>
+        <li class="nav-item" data-mod="mahasiswa">
+            <a class="nav-link" href="#"><i class="fas fa-fw fa-user-graduate"></i><span>Master Mahasiswa</span></a>
+        </li>
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">TRANSAKSI</div>
+        <li class="nav-item" data-mod="peminjaman">
+            <a class="nav-link" href="#"><i class="fas fa-fw fa-hand-holding"></i><span>Transaksi Peminjaman</span></a>
+        </li>
+        <hr class="sidebar-divider d-none d-md-block">
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+    </ul>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
+                <span class="ml-auto text-gray-600 small font-weight-bold">Tugas Konsumsi API</span>
+            </nav>
+
+            <div class="container-fluid">
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">
+                        <i id="judulIkon" class="fas text-primary mr-2"></i><span id="judul"></span>
+                    </h1>
+                    <button type="button" class="btn btn-primary shadow-sm font-weight-bold" id="btnTambah">
+                        <i class="fas fa-plus-circle fa-sm mr-1"></i> <span id="teksTambah"></span>
+                    </button>
+                </div>
+
+                <div id="pesan"></div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-wrap align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary" id="subjudul"></h6>
+                        <input type="search" id="cari" class="form-control form-control-sm w-auto" placeholder="Cari...">
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead class="thead-dark"><tr id="thead"></tr></thead>
+                                <tbody id="tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto"><div class="copyright text-center my-auto">
+                <span>Tugas Konsumsi API - 059 &copy; 2026</span></div></div>
+        </footer>
+    </div>
+</div>
+
+<!-- Modal Form -->
+<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bold" id="judulModal"></h5>
+                <button class="close text-white" type="button" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body"><form id="form" novalidate><div class="form-row" id="isiForm"></div></form></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
+                <button class="btn btn-primary" type="button" id="btnSimpan"><i class="fas fa-save mr-1"></i> Simpan Data</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
+
+<script>
+$(function () {
+
+    var BASE = 'https://api.melangkah.my.id';
+
+    // Konfigurasi tiap modul: path API, kunci id, field form, dan fitur yang tersedia
+    var M = {
+        asset: {
+            judul: 'Master Asset', ikon: 'fa-boxes', path: 'asset', idKey: 'id', crud: true,
+            sub: 'Daftar Asset', tambah: 'Tambah Asset Baru',
+            fields: [
+                { k: 'nama_asset', l: 'Nama Asset', col: 6 },
+                { k: 'kategori', l: 'Kategori', col: 6 },
+                { k: 'jumlah', l: 'Jumlah', t: 'number', col: 4 },
+                { k: 'kondisi', l: 'Kondisi', o: ['Baik', 'Rusak Ringan', 'Rusak Berat'], col: 4 },
+                { k: 'status', l: 'Status', o: ['Tersedia', 'Dipinjam', 'Maintenance'], col: 4 },
+                { k: 'lokasi', l: 'Lokasi', col: 12 }
+            ]
+        },
+        mahasiswa: {
+            judul: 'Master Mahasiswa', ikon: 'fa-user-graduate', path: 'mahasiswa', idKey: 'id', crud: true,
+            sub: 'Daftar Mahasiswa', tambah: 'Tambah Mahasiswa Baru',
+            fields: [
+                { k: 'nim', l: 'NIM', col: 6 },
+                { k: 'nama', l: 'Nama Lengkap', col: 6 },
+                { k: 'jurusan', l: 'Jurusan', col: 6 },
+                { k: 'angkatan', l: 'Angkatan', t: 'number', col: 6 },
+                { k: 'email', l: 'Email', t: 'email', col: 6 },
+                { k: 'telepon', l: 'Telepon', col: 6 }
+            ]
+        },
+        peminjaman: {
+            judul: 'Transaksi Peminjaman', ikon: 'fa-hand-holding', path: 'peminjaman', idKey: 'id_peminjaman', crud: false,
+            sub: 'Riwayat Peminjaman Asset', tambah: 'Input Peminjaman Baru',
+            fields: [
+                { k: 'id_mahasiswa', l: 'Mahasiswa', src: 'mahasiswa', col: 6 },
+                { k: 'id_asset', l: 'Asset', src: 'asset', col: 6 },
+                { k: 'jumlah', l: 'Jumlah', t: 'number', col: 4 },
+                { k: 'tanggal_pinjam', l: 'Tanggal Pinjam', t: 'date', col: 4 },
+                { k: 'tanggal_kembali', l: 'Tanggal Kembali', t: 'date', col: 4 },
+                { k: 'status_peminjaman', l: 'Status', o: ['Pending', 'Dipinjam', 'Dikembalikan'], col: 6 },
+                { k: 'keterangan', l: 'Keterangan', col: 6 }
+            ]
+        }
+    };
+
+    var cur = 'asset', rows = [], editing = null, lookup = {};
+
+    // ---------- Helper ----------
+    function esc(s) { return $('<div>').text(s == null ? '' : s).html(); }
+    function ambilList(d) { return Array.isArray(d) ? d : ((d && d.data) || []); }
+    function judulKolom(k) { return k.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }); }
+
+    function api(path, opsi) {
+        return fetch(BASE + path, opsi).then(function (r) {
+            return r.text().then(function (t) {
+                var d; try { d = JSON.parse(t); } catch (e) { d = t; }
+                if (!r.ok) throw new Error((d && d.message) || ('Error ' + r.status));
+                return d;
+            });
+        });
+    }
+
+    function pesan(teks, tipe) {
+        $('#pesan').html('<div class="alert alert-' + tipe + ' alert-dismissible fade show">' + esc(teks) +
+            '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    }
+
+    // ---------- Tampilan tabel ----------
+    function gambar() {
+        var m = M[cur], q = $('#cari').val().toLowerCase();
+        var kolom = rows.length ? Object.keys(rows[0]) : [];
+        var h = kolom.map(function (k) { return '<th>' + judulKolom(k) + '</th>'; }).join('');
+        if (m.crud) h += '<th class="text-center">Aksi</th>';
+        $('#thead').html(h);
+
+        var tampil = rows.filter(function (r) { return JSON.stringify(r).toLowerCase().indexOf(q) > -1; });
+        if (!tampil.length) {
+            $('#tbody').html('<tr><td colspan="99" class="text-center text-gray-600">Tidak ada data.</td></tr>');
+            return;
+        }
+        $('#tbody').html(tampil.map(function (r) {
+            var tr = kolom.map(function (k) { return '<td>' + esc(r[k]) + '</td>'; }).join('');
+            if (m.crud) {
+                tr += '<td class="text-center text-nowrap">' +
+                    '<button class="btn btn-info btn-sm btn-ubah" data-id="' + esc(r[m.idKey]) + '"><i class="fas fa-edit"></i></button> ' +
+                    '<button class="btn btn-danger btn-sm btn-hapus" data-id="' + esc(r[m.idKey]) + '"><i class="fas fa-trash"></i></button></td>';
+            }
+            return '<tr>' + tr + '</tr>';
+        }).join(''));
+    }
+
+    function muat() {
+        var m = M[cur];
+        $('#tbody').html('<tr><td colspan="99" class="text-center">Memuat data...</td></tr>');
+        api('/' + m.path + '/read.php').then(function (d) {
+            rows = ambilList(d); gambar();
+        }).catch(function (e) {
+            rows = [];
+            $('#thead').html('');
+            $('#tbody').html('<tr><td colspan="99" class="text-center text-danger">Gagal memuat data: ' + esc(e.message) + '</td></tr>');
+        });
+    }
+
+    function pindah(mod) {
+        cur = mod; var m = M[mod];
+        $('#accordionSidebar .nav-item').removeClass('active');
+        $('[data-mod="' + mod + '"]').addClass('active');
+        $('#judul').text(m.judul);
+        $('#judulIkon').attr('class', 'fas ' + m.ikon + ' text-primary mr-2');
+        $('#subjudul').text(m.sub);
+        $('#teksTambah').text(m.tambah);
+        $('#cari').val(''); $('#pesan').empty();
+        muat();
+    }
+
+    // ---------- Form (tambah / ubah) ----------
+    function labelOpsi(src, r) {
+        return src === 'mahasiswa' ? (r.nim ? r.nim + ' - ' : '') + r.nama : r.nama_asset;
+    }
+
+    function bukaForm(row) {
+        var m = M[cur]; editing = row;
+        $('#judulModal').text((row ? 'Ubah ' : 'Form ') + m.judul);
+
+        var html = m.fields.map(function (f) {
+            var v = row && row[f.k] != null ? row[f.k] : '', input;
+            if (f.o || f.src) {
+                var opsi = f.o ? f.o.map(function (o) { return { v: o, l: o }; })
+                               : (lookup[f.src] || []).map(function (r) { return { v: r.id, l: labelOpsi(f.src, r) }; });
+                input = '<select class="form-control" id="f_' + f.k + '" required><option value="">-- Pilih --</option>' +
+                    opsi.map(function (o) {
+                        return '<option value="' + esc(o.v) + '"' + (String(o.v) === String(v) ? ' selected' : '') + '>' + esc(o.l) + '</option>';
+                    }).join('') + '</select>';
+            } else {
+                input = '<input type="' + (f.t || 'text') + '" class="form-control" id="f_' + f.k + '" value="' + esc(v) + '" required>';
+            }
+            return '<div class="form-group col-md-' + f.col + '"><label class="font-weight-bold text-gray-800" for="f_' + f.k + '">' +
+                f.l + '</label>' + input + '</div>';
+        }).join('');
+
+        $('#isiForm').html(html);
+        $('#modalForm').modal('show');
+    }
+
+    // Transaksi peminjaman butuh daftar mahasiswa dan asset untuk dropdown
+    function siapkanLookup() {
+        return Promise.all([api('/mahasiswa/read.php'), api('/asset/read.php')]).then(function (h) {
+            lookup.mahasiswa = ambilList(h[0]); lookup.asset = ambilList(h[1]);
+        });
+    }
+
+    $('#btnTambah').on('click', function () {
+        if (cur === 'peminjaman') {
+            siapkanLookup().then(function () { bukaForm(null); })
+                .catch(function (e) { pesan('Gagal memuat daftar mahasiswa/asset: ' + e.message, 'danger'); });
+        } else { bukaForm(null); }
+    });
+
+    $('#tbody').on('click', '.btn-ubah', function () {
+        var m = M[cur], id = String($(this).data('id'));
+        var row = rows.filter(function (r) { return String(r[m.idKey]) === id; })[0];
+        bukaForm(row);
+    });
+
+    $('#tbody').on('click', '.btn-hapus', function () {
+        var m = M[cur], id = $(this).data('id');
+        if (!confirm('Hapus data ini?')) return;
+        api('/' + m.path + '/delete.php?' + m.idKey + '=' + encodeURIComponent(id), { method: 'DELETE' })
+            .then(function (d) { pesan((d && d.message) || 'Data berhasil dihapus.', 'success'); muat(); })
+            .catch(function (e) { pesan('Gagal menghapus: ' + e.message, 'danger'); });
+    });
+
+    $('#btnSimpan').on('click', function () {
+        var m = M[cur], form = $('#form')[0];
+        if (!form.reportValidity()) return;
+
+        var data = {};
+        m.fields.forEach(function (f) {
+            var v = $('#f_' + f.k).val();
+            data[f.k] = (f.t === 'number' || f.src) ? Number(v) : v;
+        });
+        if (editing) data[m.idKey] = Number(editing[m.idKey]);
+
+        $('#btnSimpan').prop('disabled', true);
+        api('/' + m.path + '/' + (editing ? 'update' : 'create') + '.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(function (d) {
+            $('#modalForm').modal('hide');
+            pesan((d && d.message) || 'Data berhasil disimpan.', 'success');
+            muat();
+        }).catch(function (e) {
+            pesan('Gagal menyimpan: ' + e.message, 'danger');
+        }).then(function () { $('#btnSimpan').prop('disabled', false); });
+    });
+
+    $('#cari').on('input', gambar);
+    $('#accordionSidebar').on('click', '[data-mod]', function (e) { e.preventDefault(); pindah($(this).data('mod')); });
+
+    pindah('asset');
+});
+</script>
+</body>
+</html>
