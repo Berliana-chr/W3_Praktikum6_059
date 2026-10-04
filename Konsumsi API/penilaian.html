@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>SIAKAD - Transaksi Penilaian Mahasiswa</title>
+
+    <!-- Fonts & styles -->
+    <link
+      href="vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900"
+      rel="stylesheet"
+    />
+    <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+
+    <!-- DataTables (bawaan template SB Admin 2) -->
+    <link
+      href="vendor/datatables/dataTables.bootstrap4.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body id="page-top">
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <ul
+        class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar"
+      >
+        <a
+          class="sidebar-brand d-flex align-items-center justify-content-center"
+          href="index.html"
+        >
+          <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <div class="sidebar-brand-text mx-3">SIAKAD <sup>APP</sup></div>
+        </a>
+
+        <hr class="sidebar-divider my-0" />
+
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a
+          >
+        </li>
+
+        <hr class="sidebar-divider" />
+
+        <div class="sidebar-heading">MASTER DATA</div>
+
+        <li class="nav-item">
+          <a class="nav-link" href="prodi.html">
+            <i class="fas fa-fw fa-landmark"></i>
+            <span>Master Data Prodi</span></a
+          >
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="mahasiswa.html">
+            <i class="fas fa-fw fa-user-graduate"></i>
+            <span>Master Data Mahasiswa</span></a
+          >
+        </li>
+
+        <hr class="sidebar-divider" />
+
+        <div class="sidebar-heading">TRANSAKSI</div>
+
+        <!-- Menu aktif -->
+        <li class="nav-item active">
+          <a class="nav-link" href="penilaian.html">
+            <i class="fas fa-fw fa-calculator"></i>
+            <span>Transaksi Penilaian</span></a
+          >
+        </li>
+
+        <hr class="sidebar-divider d-none d-md-block" />
+
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+      </ul>
+      <!-- End of Sidebar -->
+
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <!-- Topbar -->
+          <nav
+            class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+          >
+            <button
+              id="sidebarToggleTop"
+              class="btn btn-link d-md-none rounded-circle mr-3"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item dropdown no-arrow">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span
+                    class="mr-2 d-none d-lg-inline text-gray-600 small font-weight-bold"
+                    >Dr. Dosen Pengampuh, M.Kom</span
+                  >
+                  <img
+                    class="img-profile rounded-circle"
+                    src="img/undraw_profile.svg"
+                  />
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                  aria-labelledby="userDropdown"
+                >
+                  <a class="dropdown-item" href="login.html">
+                    <i
+                      class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"
+                    ></i>
+                    Keluar (Logout)
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <!-- End of Topbar -->
+
+          <!-- Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800 font-weight-bold">
+                <i class="fas fa-calculator text-primary mr-2"></i>Transaksi
+                Penilaian Mahasiswa
+              </h1>
+              <button
+                type="button"
+                class="btn btn-primary shadow-sm font-weight-bold"
+                id="btnTambah"
+              >
+                <i class="fas fa-plus-circle fa-sm mr-1"></i> Input Penilaian
+                Baru
+              </button>
+            </div>
+
+            <!-- Tabel -->
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Rekapitulasi Nilai Akhir &amp; Grade Mahasiswa
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered table-striped"
+                    id="tabelPenilaian"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead class="thead-dark">
+                      <tr>
+                        <th>Kode TRX</th>
+                        <th>NIM</th>
+                        <th>Nama Mahasiswa</th>
+                        <th>Mata Kuliah</th>
+                        <th class="text-center">Tugas (30%)</th>
+                        <th class="text-center">UTS (30%)</th>
+                        <th class="text-center">UAS (40%)</th>
+                        <th class="text-center">Nilai Akhir</th>
+                        <th class="text-center">Grade</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End of Page Content -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>SIAKAD &copy; Transaksi Penilaian Mahasiswa 2026</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Modal Form Input Transaksi Penilaian -->
+    <div
+      class="modal fade"
+      id="modalPenilaian"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="judulModal"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title font-weight-bold" id="judulModal">
+              Form Input Transaksi Penilaian
+            </h5>
+            <button
+              class="close text-white"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Tutup"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <form id="formPenilaian" novalidate>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label class="font-weight-bold text-gray-800" for="mhs"
+                    >Pilih Mahasiswa</label
+                  >
+                  <select class="form-control" id="mhs" required>
+                    <option value="">-- Pilih Mahasiswa --</option>
+                    <option value="230101001">
+                      230101001 - Aditya Pratama
+                    </option>
+                    <option value="230101002">
+                      230101002 - Siti Nurhaliza
+                    </option>
+                    <option value="230102001">
+                      230102001 - Bagas Rahadian
+                    </option>
+                    <option value="230103001">
+                      230103001 - Dewi Anggraini
+                    </option>
+                    <option value="230104001">230104001 - Fajar Ramadan</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="font-weight-bold text-gray-800" for="matkul"
+                    >Mata Kuliah</label
+                  >
+                  <select class="form-control" id="matkul">
+                    <option>Pemrograman Web</option>
+                    <option>Basis Data</option>
+                    <option>Jaringan Komputer</option>
+                    <option>Kecerdasan Buatan</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="alert alert-light border-left-info small mb-3">
+                <i class="fas fa-info-circle text-info mr-2"></i>
+                <strong>Formula Kelulusan:</strong> Nilai Akhir = (30% x Tugas)
+                + (30% x UTS) + (40% x UAS). Nilai Akhir &ge; 55 dinyatakan
+                <strong>LULUS</strong>.
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-4">
+                  <label
+                    class="font-weight-bold text-gray-800 d-block text-center"
+                    for="tugas"
+                    >Nilai Tugas (30%)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control text-center input-nilai"
+                    id="tugas"
+                    min="0"
+                    max="100"
+                    value="80"
+                  />
+                </div>
+                <div class="form-group col-md-4">
+                  <label
+                    class="font-weight-bold text-gray-800 d-block text-center"
+                    for="uts"
+                    >Nilai UTS (30%)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control text-center input-nilai"
+                    id="uts"
+                    min="0"
+                    max="100"
+                    value="80"
+                  />
+                </div>
+                <div class="form-group col-md-4">
+                  <label
+                    class="font-weight-bold text-gray-800 d-block text-center"
+                    for="uas"
+                    >Nilai UAS (40%)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control text-center input-nilai"
+                    id="uas"
+                    min="0"
+                    max="100"
+                    value="80"
+                  />
+                </div>
+              </div>
+
+              <hr />
+
+              <!-- Ringkasan otomatis -->
+              <div class="bg-light rounded p-3">
+                <div class="row text-center align-items-center">
+                  <div class="col-md-4">
+                    <div class="text-gray-600 text-uppercase small">
+                      Estimasi Nilai Akhir
+                    </div>
+                    <div
+                      class="h2 mb-0 font-weight-bold text-primary"
+                      id="estNilai"
+                    >
+                      80
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-gray-600 text-uppercase small mb-1">
+                      Grade Kelulusan
+                    </div>
+                    <span
+                      class="badge badge-info p-2"
+                      style="font-size: 1.1rem"
+                      id="estGrade"
+                      >B+</span
+                    >
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-gray-600 text-uppercase small mb-1">
+                      Status
+                    </div>
+                    <span
+                      class="badge badge-success p-2 text-uppercase"
+                      style="font-size: 0.95rem"
+                      id="estStatus"
+                      >Lulus</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button class="btn btn-primary" type="button" id="btnSimpan">
+              <i class="fas fa-save mr-1"></i> Simpan Transaksi Penilaian
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Slip Hasil Penilaian -->
+    <div
+      class="modal fade"
+      id="modalSlip"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="judulSlip"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-gray-700 text-white">
+            <h5 class="modal-title font-weight-bold" id="judulSlip">
+              <i class="fas fa-file-alt mr-2"></i>Slip Hasil Penilaian Mahasiswa
+            </h5>
+            <button
+              class="close text-white"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Tutup"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body px-4">
+            <div class="text-center">
+              <h3 class="font-weight-bold text-gray-800 mb-1">
+                SLIP HASIL PENILAIAN
+              </h3>
+              <div class="small text-gray-600 text-uppercase mb-2">
+                Sistem Informasi Akademik Terpadu
+              </div>
+              <span
+                class="badge badge-light border text-dark"
+                id="slipKode"
+              ></span>
+            </div>
+
+            <hr />
+
+            <table class="table table-borderless table-sm mb-3">
+              <tr>
+                <td class="font-weight-bold text-gray-800" style="width: 35%">
+                  NIM
+                </td>
+                <td>: <span id="slipNim"></span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold text-gray-800">Nama Mahasiswa</td>
+                <td>: <span id="slipNama"></span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold text-gray-800">Mata Kuliah</td>
+                <td>: <span id="slipMatkul"></span></td>
+              </tr>
+            </table>
+
+            <table class="table table-bordered text-center mb-3">
+              <thead class="bg-light">
+                <tr>
+                  <th>Tugas (30%)</th>
+                  <th>UTS (30%)</th>
+                  <th>UAS (40%)</th>
+                  <th>Nilai Akhir</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="slipTugas"></td>
+                  <td id="slipUts"></td>
+                  <td id="slipUas"></td>
+                  <td class="text-primary font-weight-bold" id="slipNilai"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="bg-light rounded p-3">
+              <div class="row text-center align-items-center">
+                <div class="col-6">
+                  <div class="text-gray-600 text-uppercase small">
+                    Grade Huruf
+                  </div>
+                  <div
+                    class="h2 mb-0 font-weight-bold text-gray-800"
+                    id="slipGrade"
+                  ></div>
+                </div>
+                <div class="col-6">
+                  <div class="text-gray-600 text-uppercase small">
+                    Status Kelulusan
+                  </div>
+                  <div class="h4 mb-0 font-weight-bold" id="slipStatus"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Tutup
+            </button>
+            <button class="btn btn-primary" type="button" id="btnCetakSlip">
+              <i class="fas fa-print mr-1"></i> Cetak Slip
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+      $(function () {
+        // ---------- Rumus penilaian ----------
+        function hitungNilai(tugas, uts, uas) {
+          return +(0.3 * tugas + 0.3 * uts + 0.4 * uas).toFixed(1);
+        }
+
+        function tentukanGrade(n) {
+          if (n >= 85) return "A";
+          if (n >= 75) return "B+";
+          if (n >= 65) return "B";
+          if (n >= 55) return "C";
+          if (n >= 40) return "D";
+          return "E";
+        }
+
+        var warnaGrade = {
+          A: "success",
+          "B+": "info",
+          B: "info",
+          C: "warning",
+          D: "danger",
+          E: "danger",
+        };
+
+        function tentukanStatus(n) {
+          return n >= 55 ? "Lulus" : "Tidak Lulus";
+        }
+
+        // ---------- Data awal ----------
+        var dataNilai = [
+          {
+            kode: "TRX-001",
+            nim: "230101001",
+            nama: "Aditya Pratama",
+            matkul: "Pemrograman Web",
+            tugas: 85,
+            uts: 80,
+            uas: 90,
+          },
+          {
+            kode: "TRX-002",
+            nim: "230101002",
+            nama: "Siti Nurhaliza",
+            matkul: "Pemrograman Web",
+            tugas: 90,
+            uts: 88,
+            uas: 92,
+          },
+          {
+            kode: "TRX-003",
+            nim: "230102001",
+            nama: "Bagas Rahadian",
+            matkul: "Basis Data",
+            tugas: 75,
+            uts: 70,
+            uas: 68,
+          },
+          {
+            kode: "TRX-004",
+            nim: "230103001",
+            nama: "Dewi Anggraini",
+            matkul: "Jaringan Komputer",
+            tugas: 60,
+            uts: 55,
+            uas: 50,
+          },
+          {
+            kode: "TRX-005",
+            nim: "230104001",
+            nama: "Fajar Ramadan",
+            matkul: "Kecerdasan Buatan",
+            tugas: 88,
+            uts: 85,
+            uas: 90,
+          },
+        ];
+
+        var modeEdit = false; // false = input baru, true = ubah data
+
+        var tabel = $("#tabelPenilaian").DataTable({
+          data: dataNilai,
+          columns: [
+            {
+              data: "kode",
+              render: function (d) {
+                return (
+                  '<span class="badge badge-light border text-dark font-weight-bold">' +
+                  d +
+                  "</span>"
+                );
+              },
+            },
+            { data: "nim" },
+            {
+              data: "nama",
+              render: function (d) {
+                return "<strong>" + d + "</strong>";
+              },
+            },
+            { data: "matkul" },
+            { data: "tugas", className: "text-center" },
+            { data: "uts", className: "text-center" },
+            { data: "uas", className: "text-center" },
+            {
+              data: null,
+              render: function (d, type, row) {
+                var n = hitungNilai(row.tugas, row.uts, row.uas);
+                return type === "display"
+                  ? '<span class="text-primary font-weight-bold">' +
+                      n +
+                      "</span>"
+                  : n;
+              },
+            },
+            {
+              data: null,
+              className: "text-center",
+              render: function (d, type, row) {
+                var g = tentukanGrade(hitungNilai(row.tugas, row.uts, row.uas));
+                return type === "display"
+                  ? '<span class="badge badge-' +
+                      warnaGrade[g] +
+                      '">' +
+                      g +
+                      "</span>"
+                  : g;
+              },
+            },
+            {
+              data: null,
+              render: function (d, type, row) {
+                var s = tentukanStatus(
+                  hitungNilai(row.tugas, row.uts, row.uas),
+                );
+                return type === "display"
+                  ? '<span class="badge badge-' +
+                      (s === "Lulus" ? "success" : "danger") +
+                      '">' +
+                      s +
+                      "</span>"
+                  : s;
+              },
+            },
+            {
+              data: null,
+              className: "text-center",
+              render: function () {
+                return (
+                  '<div class="d-flex flex-column align-items-center">' +
+                  '<button class="btn btn-secondary btn-sm btn-cetak mb-1" title="Cetak"><i class="fas fa-print"></i></button>' +
+                  '<button class="btn btn-info btn-sm btn-edit mb-1" title="Ubah"><i class="fas fa-edit"></i></button>' +
+                  '<button class="btn btn-danger btn-sm btn-hapus" title="Hapus"><i class="fas fa-trash"></i></button>' +
+                  "</div>"
+                );
+              },
+            },
+          ],
+          order: [[0, "asc"]],
+        });
+
+        // ---------- Ringkasan otomatis di modal ----------
+        function perbaruiRingkasan() {
+          var t = parseFloat($("#tugas").val()) || 0;
+          var u = parseFloat($("#uts").val()) || 0;
+          var a = parseFloat($("#uas").val()) || 0;
+          var n = hitungNilai(t, u, a);
+          var g = tentukanGrade(n);
+          var s = tentukanStatus(n);
+
+          $("#estNilai").text(n);
+          $("#estGrade")
+            .text(g)
+            .attr("class", "badge p-2 badge-" + warnaGrade[g]);
+          $("#estStatus")
+            .text(s)
+            .attr(
+              "class",
+              "badge p-2 text-uppercase badge-" +
+                (s === "Lulus" ? "success" : "danger"),
+            );
+        }
+
+        $(".input-nilai").on("input", perbaruiRingkasan);
+
+        // ---------- Tombol Input Penilaian Baru ----------
+        $("#btnTambah").on("click", function () {
+          modeEdit = false;
+          $("#formPenilaian")[0].reset();
+          $("#judulModal").text("Form Input Transaksi Penilaian");
+          perbaruiRingkasan();
+          $("#modalPenilaian").modal("show");
+        });
+
+        // ---------- Tombol Ubah (hanya tampilan, tabel tidak berubah) ----------
+        $("#tabelPenilaian tbody").on("click", ".btn-edit", function () {
+          var d = tabel.row($(this).closest("tr")).data();
+          modeEdit = true;
+          $("#mhs").val(d.nim);
+          $("#matkul").val(d.matkul);
+          $("#tugas").val(d.tugas);
+          $("#uts").val(d.uts);
+          $("#uas").val(d.uas);
+          $("#judulModal").text("Ubah Transaksi Penilaian");
+          perbaruiRingkasan();
+          $("#modalPenilaian").modal("show");
+        });
+
+        // ---------- Tombol Cetak (hanya alert) ----------
+        // ---------- Tombol Cetak: buka modal slip ----------
+        $("#tabelPenilaian tbody").on("click", ".btn-cetak", function () {
+          var d = tabel.row($(this).closest("tr")).data();
+          var n = hitungNilai(d.tugas, d.uts, d.uas);
+          var s = tentukanStatus(n);
+
+          $("#slipKode").text("No: " + d.kode);
+          $("#slipNim").text(d.nim);
+          $("#slipNama").text(d.nama);
+          $("#slipMatkul").text(d.matkul);
+          $("#slipTugas").text(d.tugas);
+          $("#slipUts").text(d.uts);
+          $("#slipUas").text(d.uas);
+          $("#slipNilai").text(n);
+          $("#slipGrade").text(tentukanGrade(n));
+          $("#slipStatus")
+            .text(s.toUpperCase())
+            .attr(
+              "class",
+              "h4 mb-0 font-weight-bold text-" +
+                (s === "Lulus" ? "success" : "danger"),
+            );
+
+          $("#modalSlip").modal("show");
+        });
+
+        // ---------- Tombol Cetak Slip (hanya alert) ----------
+        $("#btnCetakSlip").on("click", function () {
+          alert("Slip hasil penilaian berhasil dicetak!");
+        });
+
+        // ---------- Tombol Hapus (hanya konfirmasi dan alert) ----------
+        $("#tabelPenilaian tbody").on("click", ".btn-hapus", function () {
+          var d = tabel.row($(this).closest("tr")).data();
+          if (
+            confirm(
+              "Hapus transaksi penilaian " + d.kode + " milik " + d.nama + "?",
+            )
+          ) {
+            alert("Transaksi Penilaian berhasil dihapus!");
+          }
+        });
+
+        // ---------- Tombol Simpan (hanya alert, tabel tidak berubah) ----------
+        $("#btnSimpan").on("click", function () {
+          var form = $("#formPenilaian")[0];
+          if (!form.reportValidity()) return;
+
+          if (modeEdit) {
+            alert("Transaksi Penilaian berhasil diperbarui!");
+          } else {
+            alert("Transaksi Penilaian berhasil disimpan!");
+          }
+          $("#modalPenilaian").modal("hide");
+        });
+      });
+    </script>
+  </body>
+</html>
